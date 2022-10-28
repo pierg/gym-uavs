@@ -57,19 +57,5 @@ main() {
 
 }
 
+# shellcheck disable=SC2068
 main $@
-
-trap "docker stop $container >/dev/null && print_app_output" SIGINT SIGTERM
-
-docker wait $container >/dev/null
-
-print_app_output() {
-  docker cp $container:/var/log/supervisor/graphical-app-launcher.log - |
-    tar xO
-  result=$(docker cp $container:/tmp/graphical-app.return_code - |
-    tar xO)
-  cleanup
-  exit $result
-}
-
-print_app_output
